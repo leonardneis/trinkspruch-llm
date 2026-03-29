@@ -1,4 +1,5 @@
 import os
+import inspect
 
 import torch
 from datasets import load_dataset
@@ -94,13 +95,19 @@ def main():
         optim="paged_adamw_8bit",
     )
 
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=dataset,
-        tokenizer=tokenizer,
-        data_collator=default_data_collator,
-    )
+    trainer_kwargs = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": dataset,
+        "data_collator": default_data_collator,
+    }
+    trainer_signature = inspect.signature(Trainer.__init__).parameters
+    if "tokenizer" in trainer_signature:
+        trainer_kwargs["tokenizer"] = tokenizer
+    elif "processing_class" in trainer_signature:
+        trainer_kwargs["processing_class"] = tokenizer
+
+    trainer = Trainer(**trainer_kwargs)
 
     trainer.train()
 
