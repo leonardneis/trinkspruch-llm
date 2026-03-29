@@ -11,7 +11,10 @@ ADAPTER_PATH = "models/lora"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, required=True)
+    parser.add_argument(
+    "--prompt",
+    default="Gib mir einen kurzen, lustigen Trinkspruch auf Deutsch:"
+    )
     args = parser.parse_args()
 
     tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
